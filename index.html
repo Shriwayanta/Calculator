@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
+    <title>Calculator</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,7 +16,7 @@
         }
         .calculator {
             background-color: #ffffff;
-            border-radius: 16px; /* Increased radius for more rounded edges */
+            border-radius: 16px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 2rem;
             width: 300px;
@@ -38,7 +38,7 @@
             width: 100%;
             padding: 0.5rem;
             border: 1px solid #ddd;
-            border-radius: 12px; /* Increased radius for rounded inputs */
+            border-radius: 12px;
             font-size: 1rem;
         }
         .button-group {
@@ -50,7 +50,7 @@
         button {
             padding: 0.5rem;
             border: none;
-            border-radius: 12px; /* Increased radius for rounded buttons */
+            border-radius: 12px;
             background-color: #4a90e2;
             color: white;
             font-size: 1rem;
@@ -67,7 +67,7 @@
             color: #333;
             background-color: #f0f4f8;
             padding: 1rem;
-            border-radius: 12px; /* Increased radius for rounded result display */
+            border-radius: 12px;
             margin-bottom: 1rem;
         }
         #history {
@@ -75,7 +75,7 @@
             color: #333;
             background-color: #f0f4f8;
             padding: 1rem;
-            border-radius: 12px; /* Increased radius for rounded history box */
+            border-radius: 12px;
             max-height: 150px;
             overflow-y: auto;
             display: none;
@@ -84,7 +84,7 @@
 </head>
 <body>
     <div class="calculator">
-        <h1>Simple Calculator</h1>
+        <h1>Calculator</h1>
         <div class="input-group">
             <label for="num1">Number 1:</label>
             <input type="number" id="num1" placeholder="Enter first number">
@@ -98,6 +98,7 @@
             <button onclick="performOperation('sub')">Subtract</button>
             <button onclick="performOperation('mul')">Multiply</button>
             <button onclick="performOperation('div')">Divide</button>
+            <button onclick="clearAll()">AC</button> <!-- Added AC Button -->
         </div>
         <div id="result">Result: </div>
         <button onclick="toggleHistory()">Check History</button>
@@ -120,7 +121,6 @@
             const num1 = parseFloat(num1Input.value);
             const num2 = parseFloat(num2Input.value);
 
-            // Check for valid input
             if (isNaN(num1) || isNaN(num2)) {
                 resultDisplay.innerHTML = "Result: Please enter both numbers.";
                 return;
@@ -156,7 +156,6 @@
                     return;
             }
 
-            // Save the current result in the undo stack
             if (lastResult !== null) {
                 undoStack.push(lastResult);
             }
@@ -165,11 +164,16 @@
 
             resultDisplay.innerHTML = "Result: " + result;
 
-            // Add to history
             history.push(`${num1} ${operationSymbol} ${num2} = ${result}`);
         }
 
-        // Toggle history visibility
+        // Clear both input fields and reset the result display
+        function clearAll() {
+            num1Input.value = "";
+            num2Input.value = "";
+            resultDisplay.innerHTML = "Result: ";
+        }
+
         function toggleHistory() {
             if (historyDisplay.style.display === "none") {
                 historyDisplay.style.display = "block";
@@ -179,33 +183,26 @@
             }
         }
 
-        // Undo the last operation
         function undo() {
             if (undoStack.length === 0) {
                 resultDisplay.innerHTML = "Result: No operation to undo.";
                 return;
             }
 
-            // Retrieve the last result from the undo stack
             lastResult = undoStack.pop();
 
             resultDisplay.innerHTML = "Result: " + lastResult;
         }
 
-        // Keyboard support
         document.addEventListener("keydown", function(event) {
             if (event.key === "Enter") {
-                // Perform last operation on Enter key
                 const lastOperation = history[history.length - 1];
                 if (lastOperation) {
                     const [num1, operation, num2] = lastOperation.split(' ');
-
-                    // Recalculate based on the history (last operation)
                     performOperation(operation.toLowerCase());
                 }
             }
             if (event.key === "Escape") {
-                // Toggle history visibility on Escape key
                 toggleHistory();
             }
         });
